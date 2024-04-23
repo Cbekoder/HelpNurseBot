@@ -1,0 +1,16 @@
+{
+  "services": {
+    "1": "Ukol qilish",
+    "2": "Yosh bolalar massaji",
+    "3": "Qon analizi"
+  },
+  "nurses": {
+    "1": {
+      "name": "Shabnam Soibova",
+      "age": 21,
+      "gender": "Ayol",
+      "long": "12",
+      "lat": "24242"
+    }
+  }
+}
