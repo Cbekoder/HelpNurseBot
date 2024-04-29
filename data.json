@@ -9,8 +9,31 @@
       "name": "Shabnam Soibova",
       "age": 21,
       "gender": "Ayol",
-      "long": "12",
-      "lat": "24242"
+      "lat": "40.365349",
+      "long": "71.772082"
+    },
+    "2": {
+      "name": "Nigina Alimova",
+      "age": 22,
+      "gender": "Ayol",
+      "lat": "40.365349",
+      "long": "71.772082"
+    }
+  },
+  "hospitals": {
+    "1": {
+      "name": "Farg'ona shahar birinchi bolalar shiforxonasi",
+      "working-hours": "9:00-16:00",
+      "working_days": "1-5",
+      "lat": "40.523349",
+      "long": "71.422082"
+    },
+    "2": {
+      "name": "Farg'ona shahar 1-oilaviy poliklinika",
+      "working-hours": "9:00-16:00",
+      "working_days": "1-5",
+      "lat": "40.523349",
+      "long": "71.422082"
     }
   }
 }
