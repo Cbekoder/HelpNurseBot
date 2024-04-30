@@ -108,10 +108,10 @@ async def service_type(query: types.CallbackQuery, state: FSMContext):
     ser_place = query.data.split('_')[-1]
     if ser_place == '1':
         async with state.proxy() as data:
-            data['service_place'] = "home"
+            data['service_place'] = 1
     elif ser_place == '2':
         async with state.proxy() as data:
-            data['service_place'] = "hospital"
+            data['service_place'] = 2
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     buttons = [types.InlineKeyboardButton(service['name'], callback_data=f"service_name_{service['id']}") for service in
                SERVICES]
@@ -121,6 +121,7 @@ async def service_type(query: types.CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(lambda query: query.data.startswith('service_name_'))
 async def service_name(query: types.CallbackQuery, state: FSMContext):
+    await query.answer(None)
     ser_type = int(query.data.split('_')[-1])
     async with state.proxy() as data:
         data['service'] = ser_type
@@ -162,7 +163,7 @@ async def service_location(message: types.ContentType.LOCATION, state: FSMContex
                 "lat": data["lat"]
             }
         await state.finish()
-        if serviceChoice["service_place"] == "home":
+        if serviceChoice["service_place"] == 1:
             url = f"{BASE_URL}/locationalNurse/{str(serviceChoice['long'])}/{str(serviceChoice['lat'])}/{serviceChoice['service']}"
             response = requests.get(url)
             await message.answer("Sizning joylashuvingiz bo'yicha quyidagi hamshiralarni tavsiya qila olaman:")
@@ -176,11 +177,13 @@ async def service_location(message: types.ContentType.LOCATION, state: FSMContex
                     else:
                         photosent = await message.answer(res_text)
                     await photosent.reply_location(nurse["lat"], nurse["long"], reply_markup=types.ReplyKeyboardRemove())
+                else:
+                    await message.answer("Hamshiralar topilmadi!")
             else:
                 await message.answer("Hamshiralar topilmadi!")
 
 
-        elif serviceChoice["service_place"] == "hospital":
+        elif serviceChoice["service_place"] == 2:
             url = f"{BASE_URL}/locationalHospital/{str(serviceChoice['long'])}/{str(serviceChoice['lat'])}/{serviceChoice['service']}"
             response = requests.get(url)
             await message.answer("Sizning joylashuvingiz bo'yicha quyidagi shifoxonalarni tavsiya qila olaman:")
@@ -190,9 +193,15 @@ async def service_location(message: types.ContentType.LOCATION, state: FSMContex
                     res_text = f"Nomi: {hospital['name']}\nIsh vaqti: {hospital['working_hours']}\nIsh kunlari: {hospital['working_days']}\nTelefon raqami: {hospital['phone_number']}\n"
                     locat = await bot.send_location(message.from_user.id, hospital["lat"], hospital["long"])
                     await locat.reply(res_text)
+                else:
+                    await message.answer("Shifoxonalar topilmadi!")
             else:
                 await message.answer("Shifoxonalar topilmadi!")
-
+        keyboard = types.InlineKeyboardMarkup()
+        buttons = [types.InlineKeyboardButton("Uydan", callback_data="service_place_1"),
+                   types.InlineKeyboardButton("Shifoxonadan", callback_data="service_place_2"), ]
+        keyboard.add(*buttons)
+        await message.answer('Boshqa xizmatlardan foydalanish:', reply_markup=keyboard)
     else:
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
         keyboard.add(types.KeyboardButton("Joylashuv", request_location=True))
@@ -432,6 +441,7 @@ async def service_name_for_nurse(query: types.CallbackQuery):
 
 @dp.callback_query_handler(lambda query: query.data.startswith('service_hospital_done'))
 async def service_name_hos_done(query: types.CallbackQuery):
+    await query.answer()
     await query.message.answer("Shifoxona muvaffaqqiyatli yaratildi ✅", reply_markup=types.ReplyKeyboardRemove())
     await query.message.answer("Yana qo'shimcha nimadir qo'shmoqchimisiz:", reply_markup=ADMIN_KEYBOARD)
 
